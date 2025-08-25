@@ -1,0 +1,21 @@
+version: "1.0"
+services:
+  mariadb:
+    image: mariadb:10.11
+    container_name: mariadb-container
+    hostname: db
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: senha123
+    volumes:
+      - ./mariadb/:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin:5.2
+    container_name: phpmyadmin-container
+    restart: always
+    ports:
+      - "82:80"
+    environment:
+      - PMA_HOST=db
+    depends_on:
+      - mariadb
