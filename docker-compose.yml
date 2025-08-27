@@ -1,5 +1,6 @@
 version: "1.0"
 services:
+
   mariadb:
     image: mariadb:10.11
     container_name: mariadb-container
@@ -9,6 +10,9 @@ services:
       MARIADB_ROOT_PASSWORD: senha123
     volumes:
       - ./mariadb/:/var/lib/mysql
+    ports:
+    - "3306:3306"
+    
   phpmyadmin:
     image: phpmyadmin:5.2
     container_name: phpmyadmin-container
