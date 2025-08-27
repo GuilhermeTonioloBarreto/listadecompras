@@ -34,8 +34,44 @@ app.post('/usuario', async (req, res) => {
   }
 });
 
+// delete
+app.delete('/usuario/:id', async(req, res) => {
+  const { id } = req.params;
 
+  try {
+    const [result] = await db.query('DELETE FROM `usuarios` WHERE id = (?)', [id]);
+    
+    if(result.affectedRows === 0){
+      return res.status(404).json( { error: 'usuário não encontrado' })
+    }
 
+    res.status(200).json({ message: 'usuário deletado' });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Erro ao salvar no banco' });
+  }
+})
+
+// atualizar senha
+app.patch('/usuario/:id', async(req, res) => {
+  const { id } = req.params;
+  const { senha } = req.body;
+
+  if (!senha) {
+    return res.status(400).json({ error: 'Nenhum dado para atualizar' });
+  }
+
+  const senhaHash = await bcrypt.hash(senha, 10);
+
+  const [result] = await db.query(`UPDATE usuarios SET senha = (?) WHERE id = (?)`, [senhaHash, id]);
+  
+  if (result.affectedRows === 0) {
+    return res.status(404).json({ error: 'Usuário não encontrado' });
+  }
+
+  res.status(200).json({ message: 'Senha atualizada com sucesso' });
+})
 
 // -------------------------------------------
 // Rota para login de usuário
